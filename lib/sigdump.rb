@@ -54,14 +54,18 @@ module Sigdump
     hash_size = 0
     cmap = {}
     ObjectSpace.each_object {|o|
-      c = o.class
-      cmap[c] = (cmap[c] || 0) + 1
-      if c == String
-        string_size += o.bytesize
-      elsif c == Array
-        array_size = o.size
-      elsif c == Hash
-        hash_size = o.size
+      begin
+        c = o.class
+        cmap[c] = (cmap[c] || 0) + 1
+        if c == String
+          string_size += o.bytesize
+        elsif c == Array
+          array_size = o.size
+        elsif c == Hash
+          hash_size = o.size
+        end
+      rescue Exception => e
+        io.write "#{e.inspect}\n"
       end
     }
 
